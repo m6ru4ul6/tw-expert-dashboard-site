@@ -2,7 +2,7 @@
   "ok": true,
   "output": "public",
   "db": "/home/runner/work/tw-expert-dashboard/tw-expert-dashboard/data/dashboard/dashboard.db",
-  "generated_at": "2026-07-07T04:34:24+08:00",
+  "generated_at": "2026-07-07T12:02:17+08:00",
   "latest_run_id": "20260706_223224",
   "run_count": 63,
   "claim_count": 191,
