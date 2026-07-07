@@ -15,7 +15,8 @@ Keep these rules when changing dashboard pages or assets:
 4. Server asset routes under report paths, such as `/runs/app.js` and `/runs/styles.css`, must return the asset files.
 5. Static exports must include `/runs/* /index.html 200` and `/run/* /index.html 200` rewrites plus routed asset copies under `public/runs/` and `public/run/`.
 6. Static exports must also create real `public/runs/<encoded_run_id>/index.html` files because GitHub Pages does not honor Cloudflare-style `_redirects`.
-7. New local assets used by `index.html` must live under `dashboard/` and be covered by the smoke test.
+7. Each real GitHub Pages permalink directory must include its own `app.js` and `styles.css`; otherwise `/runs/<run_id>/` resolves relative assets under that same directory and renders as unstyled HTML.
+8. New local assets used by `index.html` must live under `dashboard/` and be covered by the smoke test.
 
 Before shipping dashboard changes, run:
 
