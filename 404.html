@@ -4,6 +4,16 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>台股專家觀點研究儀表板</title>
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem("twExpertTheme");
+          if (saved === "dark" || saved === "light") {
+            document.documentElement.dataset.theme = saved;
+          }
+        } catch (error) {}
+      })();
+    </script>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
@@ -11,6 +21,12 @@
       <div class="brand-block">
         <p class="eyebrow">本機研究儀表板</p>
         <h1>台股專家觀點研究儀表板</h1>
+      </div>
+      <div class="top-actions">
+        <button class="theme-toggle" type="button" data-theme-toggle aria-label="切換暗黑模式">
+          <span class="theme-icon" data-theme-icon>◐</span>
+          <span data-theme-label>暗黑</span>
+        </button>
       </div>
       <div class="run-meta" id="runMeta">載入中</div>
     </header>

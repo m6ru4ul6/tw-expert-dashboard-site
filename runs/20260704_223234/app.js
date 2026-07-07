@@ -51,6 +51,34 @@ const staticDataCandidates = (() => {
 
 let staticBundlePromise = null;
 
+function currentTheme() {
+  return document.documentElement.dataset.theme === "dark" ? "dark" : "light";
+}
+
+function renderThemeToggle() {
+  const theme = currentTheme();
+  const button = $("[data-theme-toggle]");
+  const label = $("[data-theme-label]");
+  const icon = $("[data-theme-icon]");
+  if (label) label.textContent = theme === "dark" ? "淺色" : "暗黑";
+  if (icon) icon.textContent = theme === "dark" ? "☼" : "◐";
+  if (button) button.setAttribute("aria-pressed", theme === "dark" ? "true" : "false");
+}
+
+function bindThemeToggle() {
+  const button = $("[data-theme-toggle]");
+  if (!button) return;
+  button.addEventListener("click", () => {
+    const nextTheme = currentTheme() === "dark" ? "light" : "dark";
+    document.documentElement.dataset.theme = nextTheme;
+    try {
+      localStorage.setItem("twExpertTheme", nextTheme);
+    } catch (error) {}
+    renderThemeToggle();
+  });
+  renderThemeToggle();
+}
+
 async function api(path) {
   let lastError;
   if (prefersStaticData) {
@@ -803,6 +831,7 @@ function activateView(name) {
 }
 
 function bindEvents() {
+  bindThemeToggle();
   $$(".tab").forEach((tab) => {
     tab.addEventListener("click", () => activateView(tab.dataset.view));
   });
