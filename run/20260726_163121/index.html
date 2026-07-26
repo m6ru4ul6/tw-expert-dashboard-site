@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>台股專家觀點研究儀表板</title>
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem("twExpertTheme");
+          if (saved === "dark" || saved === "light") {
+            document.documentElement.dataset.theme = saved;
+          }
+        } catch (error) {}
+      })();
+    </script>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand-block">
+        <p class="eyebrow">本機研究儀表板</p>
+        <h1>台股專家觀點研究儀表板</h1>
+      </div>
+      <div class="top-actions">
+        <button class="theme-toggle" type="button" data-theme-toggle aria-label="切換暗黑模式">
+          <span class="theme-icon" data-theme-icon>◐</span>
+          <span data-theme-label>暗黑</span>
+        </button>
+      </div>
+      <div class="run-meta" id="runMeta">載入中</div>
+    </header>
+
+    <nav class="tabs" aria-label="Dashboard views">
+      <button class="tab active" data-view="overview">今日</button>
+      <button class="tab" data-view="history">歷史紀錄</button>
+      <button class="tab" data-view="claims">觀點追蹤</button>
+      <button class="tab" data-view="market">標的快篩</button>
+      <button class="tab" data-view="authors">作者</button>
+    </nav>
+
+    <main>
+      <section id="view-overview" class="view active">
+        <section class="metric-grid" id="summaryMetrics"></section>
+
+        <section class="layout two-col">
+          <article class="panel">
+            <div class="panel-head">
+              <h2>今日共識</h2>
+            </div>
+            <div id="consensusBlock" class="text-block"></div>
+          </article>
+          <article class="panel">
+            <div class="panel-head">
+              <h2>今日分歧</h2>
+            </div>
+            <div id="divergenceBlock" class="text-block"></div>
+          </article>
+        </section>
+
+        <section class="layout two-col">
+          <article class="panel">
+            <div class="panel-head">
+              <h2>先看名單</h2>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>代號</th>
+                    <th>名稱</th>
+                    <th>研究時機</th>
+                    <th>分類</th>
+                    <th>理由</th>
+                  </tr>
+                </thead>
+                <tbody id="watchlistRows"></tbody>
+              </table>
+            </div>
+          </article>
+          <article class="panel">
+            <div class="panel-head">
+              <h2>待驗證觀點</h2>
+            </div>
+            <div id="openClaimsList" class="item-list"></div>
+          </article>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <h2>本輪影片</h2>
+          </div>
+          <div id="videoList" class="video-grid"></div>
+        </section>
+      </section>
+
+      <section id="view-history" class="view">
+        <section class="panel">
+          <div class="panel-head">
+            <h2>歷史紀錄</h2>
+            <div class="filters">
+              <label>起日 <input id="historyFrom" type="date" /></label>
+              <label>迄日 <input id="historyTo" type="date" /></label>
+              <label>
+                模式
+                <select id="historyMode">
+                  <option value="">全部</option>
+                  <option value="formal">正式</option>
+                  <option value="test">測試</option>
+                </select>
+              </label>
+              <div class="filter-field">
+                <span class="filter-label">作者</span>
+                <div class="multi-select" id="historyAuthorPicker">
+                  <button
+                    id="historyAuthorToggle"
+                    class="multi-select-toggle"
+                    type="button"
+                    aria-haspopup="listbox"
+                    aria-expanded="false"
+                  >
+                    <span id="historyAuthorLabel">全部作者</span>
+                    <span class="select-caret" aria-hidden="true"></span>
+                  </button>
+                  <div
+                    id="historyAuthorMenu"
+                    class="multi-select-menu"
+                    role="listbox"
+                    aria-multiselectable="true"
+                    hidden
+                  >
+                    <div id="historyAuthorOptions" class="multi-select-options">
+                      <div class="multi-select-empty">載入作者中</div>
+                    </div>
+                    <div class="multi-select-actions">
+                      <button id="historyAuthorClear" class="ghost-button" type="button">清除</button>
+                      <button id="historyAuthorDone" class="ghost-button primary" type="button">完成</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <button id="historyApply" class="button">套用</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>日期</th>
+                  <th>資料狀態</th>
+                  <th>模式</th>
+                  <th>觀點數</th>
+                  <th>影片數</th>
+                  <th>快篩數</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="historyRows"></tbody>
+            </table>
+          </div>
+        </section>
+        <section class="panel detail-panel" id="runDetailPanel">
+          <div class="panel-head">
+            <h2>紀錄內容</h2>
+          </div>
+          <div id="runDetail" class="detail-content subtle">選擇一筆紀錄</div>
+        </section>
+      </section>
+
+      <section id="view-claims" class="view">
+        <section class="panel">
+          <div class="panel-head">
+            <h2>觀點追蹤</h2>
+            <div class="filters">
+              <label>作者 <input id="claimAuthor" type="search" placeholder="例：楊育華" /></label>
+              <label>標的 <input id="claimTicker" type="search" placeholder="例：2408" /></label>
+              <label>
+                狀態
+                <select id="claimStatus">
+                  <option value="">全部</option>
+                  <option value="open">待驗證</option>
+                  <option value="evaluated">已評分</option>
+                  <option value="not_evaluable">不可評分</option>
+                </select>
+              </label>
+              <label>
+                結果
+                <select id="claimResult">
+                  <option value="">全部</option>
+                  <option value="success">success</option>
+                  <option value="partial">partial</option>
+                  <option value="miss">miss</option>
+                  <option value="not_evaluable">not_evaluable</option>
+                </select>
+              </label>
+              <button id="claimApply" class="button">套用</button>
+            </div>
+          </div>
+          <div id="claimList" class="claim-list"></div>
+        </section>
+      </section>
+
+      <section id="view-market" class="view">
+        <section class="panel">
+          <div class="panel-head">
+            <h2>標的快篩</h2>
+            <div class="filters">
+              <label>代號 <input id="marketTicker" type="search" placeholder="例：2454" /></label>
+              <label>
+                分類
+                <select id="marketCategory">
+                  <option value="">全部</option>
+                  <option value="強勢回檔觀察">強勢回檔觀察</option>
+                  <option value="已大漲/高檔不追">已大漲/高檔不追</option>
+                  <option value="低基期轉強觀察">低基期轉強觀察</option>
+                  <option value="弱勢/避開">弱勢/避開</option>
+                  <option value="資料不足/不能判定">資料不足/不能判定</option>
+                </select>
+              </label>
+              <button id="marketApply" class="button">套用</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>代號</th>
+                  <th>名稱</th>
+                  <th>收盤</th>
+                  <th>5日</th>
+                  <th>20日</th>
+                  <th>距20高</th>
+                  <th>研究時機</th>
+                  <th>確認 / 失效</th>
+                </tr>
+              </thead>
+              <tbody id="marketRows"></tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+
+      <section id="view-authors" class="view">
+        <section class="panel">
+          <div class="panel-head">
+            <h2>作者命中率</h2>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>作者</th>
+                  <th>可評分樣本</th>
+                  <th>命中率</th>
+                  <th>近20筆</th>
+                  <th>高確信</th>
+                  <th>平均報酬</th>
+                  <th>平均相對報酬</th>
+                  <th>待驗證</th>
+                </tr>
+              </thead>
+              <tbody id="authorRows"></tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <div id="toast" class="toast" hidden></div>
+    <script src="app.js"></script>
+  </body>
+</html>

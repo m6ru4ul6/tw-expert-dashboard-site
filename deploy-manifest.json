@@ -2,9 +2,9 @@
   "ok": true,
   "output": "public",
   "db": "/Users/dwaynemacpro/Documents/台股分析師專家建議/data/dashboard/dashboard.db",
-  "generated_at": "2026-07-24T22:49:44+08:00",
-  "latest_run_id": "20260724_223312",
-  "run_count": 85,
-  "claim_count": 266,
+  "generated_at": "2026-07-26T16:52:44+08:00",
+  "latest_run_id": "20260726_163121",
+  "run_count": 87,
+  "claim_count": 270,
   "market_screen_count": 500
 }
