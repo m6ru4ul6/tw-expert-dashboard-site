@@ -428,6 +428,23 @@ function adoptionCompact(status) {
   return match ? match[1].replace(/\s+/g, "") : status || "未標示";
 }
 
+function transcriptCoverageDisplay(summary) {
+  const coverage = summary?.transcript_coverage || {};
+  const saved = Number(coverage.saved_count);
+  const total = Number(coverage.source_video_count);
+  const adoptionStatus = summary?.run?.adoption_status || "";
+  if (Number.isFinite(saved) && Number.isFinite(total) && total > 0) {
+    return {
+      value: adoptionStatus ? adoptionCompact(adoptionStatus) : "未標示",
+      hint: `${adoptionStatus ? `採納紀錄：${adoptionStatus}` : "採納狀態未標示"}；v2 動作來源逐字稿保存：${saved}/${total}`,
+    };
+  }
+  return {
+    value: adoptionCompact(adoptionStatus),
+    hint: adoptionStatus || "此紀錄未提供逐字稿採納或 run-scoped 保存統計",
+  };
+}
+
 function decodeRouteValue(value) {
   try {
     return decodeURIComponent(value);
@@ -1101,6 +1118,7 @@ function renderOverviewScreens() {
 function renderSummary() {
   const data = state.summary || {};
   const run = data.run || {};
+  const transcriptCoverage = transcriptCoverageDisplay(data);
   const extracted = extractActions(data);
   state.actions = extracted.actions;
   state.excludedSystemActions = extracted.excludedSystemActions;
@@ -1129,7 +1147,7 @@ function renderSummary() {
       "metric-system",
     ),
     metric("待驗證觀點", `${data.open_claims?.length || 0} 筆`, "依原訂條件追蹤", "metric-pending"),
-    metric("逐字稿採納", adoptionCompact(run.adoption_status), run.adoption_status || "未標示", ""),
+    metric("逐字稿採納／保存", transcriptCoverage.value, transcriptCoverage.hint, ""),
   ];
   const metricsTarget = $("#summaryMetrics");
   if (metricsTarget) metricsTarget.innerHTML = metrics.join("");
