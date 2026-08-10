@@ -1,11 +1,13 @@
 # Dashboard Routing Contract
 
+> This file documents local rendering and the static GitHub fallback. It does not define the current official report URL. See [`CURRENT_DELIVERY.md`](../CURRENT_DELIVERY.md); Sites is the official destination and GitHub Pages is used only after a verified Sites failure.
+
 This dashboard must work from both:
 
 - the local server, for example `http://127.0.0.1:8766/runs/20260702_223151`
 - direct file opening, for example `file:///.../dashboard/index.html`
 - the static cloud export, for example `https://example.pages.dev/runs/20260702_223151`
-- GitHub project Pages, for example `https://m6ru4ul6.github.io/tw-expert-dashboard-site/runs/20260702_223151`
+- the manual GitHub fallback, for example `https://m6ru4ul6.github.io/tw-expert-dashboard-site/runs/20260702_223151`
 
 Keep these rules when changing dashboard pages or assets:
 
