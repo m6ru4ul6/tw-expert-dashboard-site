@@ -2,11 +2,11 @@
   "ok": true,
   "schema_version": 2,
   "output": "public",
-  "db": "data/dashboard.db",
-  "generated_at": "2026-08-26T22:51:32+08:00",
-  "latest_run_id": "20260826_223537",
-  "run_count": 119,
-  "claim_count": 353,
-  "analyst_action_count": 393,
-  "market_screen_count": 1354
+  "db": "/Users/dwaynemacpro/Documents/台股分析師專家建議/data/dashboard/dashboard.db",
+  "generated_at": "2026-08-27T22:46:31+08:00",
+  "latest_run_id": "20260827_223143",
+  "run_count": 120,
+  "claim_count": 355,
+  "analyst_action_count": 408,
+  "market_screen_count": 1369
 }
