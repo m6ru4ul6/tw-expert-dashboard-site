@@ -3,10 +3,10 @@
   "schema_version": 2,
   "output": "public",
   "db": "/Users/dwaynemacpro/Documents/台股分析師專家建議/data/dashboard/dashboard.db",
-  "generated_at": "2026-08-27T22:46:31+08:00",
-  "latest_run_id": "20260827_223143",
-  "run_count": 120,
-  "claim_count": 355,
-  "analyst_action_count": 408,
-  "market_screen_count": 1369
+  "generated_at": "2026-08-28T22:44:15+08:00",
+  "latest_run_id": "20260828_223211",
+  "run_count": 121,
+  "claim_count": 358,
+  "analyst_action_count": 426,
+  "market_screen_count": 1387
 }
