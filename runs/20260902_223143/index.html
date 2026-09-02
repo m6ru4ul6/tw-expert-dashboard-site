@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>台股分析師觀點儀表板</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b6b57'/%3E%3Cpath d='M14 43 27 30l9 8 14-18' fill='none' stroke='white' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"
+    />
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem("twExpertTheme");
+          if (saved === "dark" || saved === "light") {
+            document.documentElement.dataset.theme = saved;
+          }
+        } catch (error) {}
+      })();
+    </script>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#mainContent">跳到主要內容</a>
+
+    <header class="topbar">
+      <div class="brand-block">
+        <p class="eyebrow">ANALYST SIGNAL DESK</p>
+        <h1>台股分析師觀點</h1>
+        <p class="brand-note">老師動作與系統驗證分層呈現</p>
+      </div>
+      <div class="run-meta" id="runMeta" aria-live="polite">載入最新紀錄中</div>
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切換顯示主題">
+        <span class="theme-icon" data-theme-icon aria-hidden="true">◐</span>
+        <span data-theme-label>暗黑</span>
+      </button>
+    </header>
+
+    <nav class="tabs" aria-label="儀表板功能">
+      <button class="tab active" type="button" data-view="overview">今日總覽</button>
+      <button class="tab" type="button" data-view="history">歷史紀錄</button>
+      <button class="tab" type="button" data-view="claims">觀點追蹤</button>
+      <button class="tab" type="button" data-view="market">系統快篩驗證</button>
+      <button class="tab" type="button" data-view="authors">作者成績</button>
+    </nav>
+
+    <main id="mainContent" class="app-shell">
+      <section id="view-overview" class="view active" aria-labelledby="overviewTitle">
+        <section class="briefing-hero">
+          <div>
+            <p class="section-kicker">TODAY'S BRIEFING</p>
+            <h2 id="overviewTitle">今日決策脈絡</h2>
+            <p class="hero-copy">先讀共同觀點，再核對每位老師的明確動作；系統快篩只做資料驗證，不會改寫老師立場。</p>
+          </div>
+          <div class="metric-grid" id="summaryMetrics" aria-live="polite"></div>
+        </section>
+        <div id="contractStatusNote" aria-live="polite"></div>
+
+        <section class="panel story-panel" id="consensusSection">
+          <div class="panel-head">
+            <div class="heading-cluster">
+              <span class="section-number">01</span>
+              <div>
+                <p class="section-kicker">SHARED VIEW</p>
+                <h2>今日共識</h2>
+              </div>
+            </div>
+            <p class="panel-description">只彙整共同方向，不把不同老師的動作壓成同一個結論。</p>
+          </div>
+          <div id="consensusBlock" class="text-block"></div>
+        </section>
+
+        <section class="panel" id="analystActionsSection">
+          <div class="panel-head responsive-head">
+            <div class="heading-cluster">
+              <span class="section-number">02</span>
+              <div>
+                <p class="section-kicker">ANALYST ACTIONS</p>
+                <h2>分析師明確動作</h2>
+              </div>
+            </div>
+            <label class="compact-filter">
+              <span>動作</span>
+              <select id="overviewActionFilter">
+                <option value="">全部動作</option>
+                <option value="買進">買進</option>
+                <option value="加碼">加碼</option>
+                <option value="續抱">續抱</option>
+                <option value="減碼">減碼</option>
+                <option value="賣出">賣出</option>
+                <option value="停利">停利</option>
+                <option value="停損">停損</option>
+                <option value="觀望">觀望</option>
+                <option value="未給明確動作">未給明確動作</option>
+              </select>
+            </label>
+          </div>
+          <div class="layer-note analyst-layer-note">
+            <strong>老師層</strong>
+            <span>清楚標示逐字稿明確用語、語意正規化或僅方向無動作，並保留逐字稿原句、條件與持股情境；任何系統推論都不會列入此區。</span>
+          </div>
+          <div id="actionIntegrityNote"></div>
+          <div id="analystActionList" class="action-grid" aria-live="polite"></div>
+        </section>
+
+        <section class="panel" id="quickScreenSection">
+          <div class="panel-head responsive-head">
+            <div class="heading-cluster">
+              <span class="section-number">03</span>
+              <div>
+                <p class="section-kicker">SYSTEM CHECK</p>
+                <h2>系統快篩驗證</h2>
+              </div>
+            </div>
+            <div class="inline-filters">
+              <label class="compact-filter">
+                <span>方向</span>
+                <select id="overviewDirectionFilter">
+                  <option value="">全部方向</option>
+                  <option value="偏多確認">偏多確認</option>
+                  <option value="偏多未確認">偏多未確認</option>
+                  <option value="中性">中性</option>
+                  <option value="偏空確認">偏空確認</option>
+                  <option value="資料不足">資料不足</option>
+                </select>
+              </label>
+              <label class="compact-filter">
+                <span>一致性</span>
+                <select id="overviewAlignmentFilter">
+                  <option value="">全部一致性</option>
+                  <option value="支持">支持</option>
+                  <option value="部分支持">部分支持</option>
+                  <option value="尚未確認">尚未確認</option>
+                  <option value="矛盾">矛盾</option>
+                  <option value="資料不足">資料不足</option>
+                </select>
+              </label>
+            </div>
+          </div>
+          <div class="layer-note system-layer-note">
+            <strong>系統層</strong>
+            <span>依價格、均線與量能驗證。即使結果為「矛盾」，上方老師的原始動作仍維持不變。</span>
+          </div>
+          <div id="overviewMarketList" class="screen-grid" aria-live="polite"></div>
+        </section>
+
+        <section class="panel story-panel" id="divergenceSection">
+          <div class="panel-head">
+            <div class="heading-cluster">
+              <span class="section-number">04</span>
+              <div>
+                <p class="section-kicker">DIVERGENCE</p>
+                <h2>分歧</h2>
+              </div>
+            </div>
+            <p class="panel-description">保留各自的判斷路徑，不以最保守的共同分母覆蓋差異。</p>
+          </div>
+          <div id="divergenceBlock" class="text-block"></div>
+        </section>
+
+        <section class="panel story-panel" id="trackingSection">
+          <div class="panel-head">
+            <div class="heading-cluster">
+              <span class="section-number">05</span>
+              <div>
+                <p class="section-kicker">FOLLOW-UP</p>
+                <h2>追蹤</h2>
+              </div>
+            </div>
+          </div>
+          <div id="trackingBlock" class="text-block"></div>
+          <div class="subsection-head">
+            <h3>待驗證觀點</h3>
+            <span>依原訂評估條件追蹤</span>
+          </div>
+          <div id="openClaimsList" class="claim-list compact-list"></div>
+        </section>
+      </section>
+
+      <section id="view-history" class="view" aria-labelledby="historyTitle">
+        <section class="panel">
+          <div class="panel-head stacked-head">
+            <div>
+              <p class="section-kicker">ARCHIVE</p>
+              <h2 id="historyTitle">歷史紀錄</h2>
+            </div>
+            <div class="filters history-filters">
+              <label>起日 <input id="historyFrom" type="date" /></label>
+              <label>迄日 <input id="historyTo" type="date" /></label>
+              <label>
+                模式
+                <select id="historyMode">
+                  <option value="">全部</option>
+                  <option value="formal">正式</option>
+                  <option value="test">測試</option>
+                </select>
+              </label>
+              <div class="filter-field">
+                <span class="filter-label">作者</span>
+                <div class="multi-select" id="historyAuthorPicker">
+                  <button id="historyAuthorToggle" class="multi-select-toggle" type="button" aria-haspopup="listbox" aria-expanded="false">
+                    <span id="historyAuthorLabel">全部作者</span>
+                    <span class="select-caret" aria-hidden="true"></span>
+                  </button>
+                  <div id="historyAuthorMenu" class="multi-select-menu" role="listbox" aria-multiselectable="true" hidden>
+                    <div id="historyAuthorOptions" class="multi-select-options">
+                      <div class="multi-select-empty">載入作者中</div>
+                    </div>
+                    <div class="multi-select-actions">
+                      <button id="historyAuthorClear" class="ghost-button" type="button">清除</button>
+                      <button id="historyAuthorDone" class="ghost-button primary" type="button">完成</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <button id="historyApply" class="button" type="button">套用</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>日期</th>
+                  <th>資料狀態</th>
+                  <th>模式</th>
+                  <th>動作／觀點</th>
+                  <th>影片</th>
+                  <th>快篩</th>
+                  <th><span class="sr-only">操作</span></th>
+                </tr>
+              </thead>
+              <tbody id="historyRows"></tbody>
+            </table>
+          </div>
+        </section>
+        <section class="panel detail-panel" id="runDetailPanel">
+          <div class="panel-head">
+            <div>
+              <p class="section-kicker">DAILY DETAIL</p>
+              <h2>紀錄內容</h2>
+            </div>
+          </div>
+          <div id="runDetail" class="detail-content subtle">選擇一筆紀錄查看逐片摘要</div>
+        </section>
+      </section>
+
+      <section id="view-claims" class="view" aria-labelledby="claimsTitle">
+        <section class="panel">
+          <div class="panel-head stacked-head">
+            <div>
+              <p class="section-kicker">CLAIM TRACKER</p>
+              <h2 id="claimsTitle">觀點追蹤</h2>
+            </div>
+            <div class="filters">
+              <label>作者 <input id="claimAuthor" type="search" placeholder="例：楊育華" /></label>
+              <label>標的 <input id="claimTicker" type="search" placeholder="例：2408" /></label>
+              <label>
+                狀態
+                <select id="claimStatus">
+                  <option value="">全部</option>
+                  <option value="open">待驗證</option>
+                  <option value="evaluated">已評分</option>
+                  <option value="not_evaluable">不可評分</option>
+                </select>
+              </label>
+              <label>
+                結果
+                <select id="claimResult">
+                  <option value="">全部</option>
+                  <option value="success">成功</option>
+                  <option value="partial">部分符合</option>
+                  <option value="miss">未符合</option>
+                  <option value="not_evaluable">不可評分</option>
+                </select>
+              </label>
+              <button id="claimApply" class="button" type="button">套用</button>
+            </div>
+          </div>
+          <div id="claimList" class="claim-list"></div>
+        </section>
+      </section>
+
+      <section id="view-market" class="view" aria-labelledby="marketTitle">
+        <section class="panel">
+          <div class="panel-head stacked-head">
+            <div>
+              <p class="section-kicker">SYSTEM CHECK</p>
+              <h2 id="marketTitle">系統快篩驗證</h2>
+              <p class="panel-description">此頁只比較市場資料與老師動作的一致性，不產生買賣建議。</p>
+            </div>
+            <div class="filters market-filters">
+              <label>代號 <input id="marketTicker" type="search" placeholder="例：2454" /></label>
+              <label>
+                分析師動作
+                <select id="marketAction">
+                  <option value="">全部動作</option>
+                  <option value="買進">買進</option>
+                  <option value="加碼">加碼</option>
+                  <option value="續抱">續抱</option>
+                  <option value="減碼">減碼</option>
+                  <option value="賣出">賣出</option>
+                  <option value="停利">停利</option>
+                  <option value="停損">停損</option>
+                  <option value="觀望">觀望</option>
+                  <option value="未給明確動作">未給明確動作</option>
+                </select>
+              </label>
+              <label>
+                方向
+                <select id="marketDirection">
+                  <option value="">全部方向</option>
+                  <option value="偏多確認">偏多確認</option>
+                  <option value="偏多未確認">偏多未確認</option>
+                  <option value="中性">中性</option>
+                  <option value="偏空確認">偏空確認</option>
+                  <option value="資料不足">資料不足</option>
+                </select>
+              </label>
+              <label>
+                一致性
+                <select id="marketAlignment">
+                  <option value="">全部一致性</option>
+                  <option value="支持">支持</option>
+                  <option value="部分支持">部分支持</option>
+                  <option value="尚未確認">尚未確認</option>
+                  <option value="矛盾">矛盾</option>
+                  <option value="資料不足">資料不足</option>
+                </select>
+              </label>
+              <button id="marketApply" class="button" type="button">套用</button>
+            </div>
+          </div>
+          <div class="layer-note system-layer-note">
+            <strong>閱讀原則</strong>
+            <span>方向是系統對市場資料的判定；一致性是它與老師動作的關係。兩者都不是新的投資立場。</span>
+          </div>
+          <div id="marketSummary" class="result-summary" aria-live="polite"></div>
+          <div id="marketRows" class="screen-grid"></div>
+        </section>
+      </section>
+
+      <section id="view-authors" class="view" aria-labelledby="authorsTitle">
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <p class="section-kicker">SCOREBOARD</p>
+              <h2 id="authorsTitle">作者成績</h2>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>作者</th>
+                  <th>可評分樣本</th>
+                  <th>命中率</th>
+                  <th>近 20 筆</th>
+                  <th>高確信</th>
+                  <th>平均報酬</th>
+                  <th>平均相對報酬</th>
+                  <th>待驗證</th>
+                </tr>
+              </thead>
+              <tbody id="authorRows"></tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+    <script src="app.js"></script>
+  </body>
+</html>
